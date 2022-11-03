@@ -1,6 +1,8 @@
 const path = require('path')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin
+const { CleanWebpackPlugin } = require('clean-webpack-plugin')
 
 const Dotenv = require('dotenv-webpack')
 
@@ -13,9 +15,10 @@ module.exports = {
         // assetModuleFilename: 'assets/images/[hash][ext][query]'
     },
     mode: 'development',
+    devtool: 'source-map',
     // watch: true,
     resolve: {
-        extensions: ['.js'],
+        extensions: ['.js', '.jsx'],
         alias: {
             '@utils': path.resolve(__dirname, 'src/utils/'),
             '@templates': path.resolve(__dirname, 'src/templates/'),
@@ -26,7 +29,7 @@ module.exports = {
     module: {
         rules: [
             {
-                test: /\.m?js/,
+                test: /\.(m?js|jsx)$/,
                 exclude: /node_modules/,
                 use: {
                     loader: 'babel-loader'
@@ -35,6 +38,11 @@ module.exports = {
             {
                 test: /\.css|\.styl$/i,
                 use: [MiniCssExtractPlugin.loader, 'css-loader', 'stylus-loader']
+            },
+            {
+                // test: /\.scss/,
+                test: /\.(css|scss)$/,
+                use: ['style-loader', 'css-loader', 'sass-loader']
             },
             {
                 test: /\.png/,
@@ -49,6 +57,14 @@ module.exports = {
                 generator: {
                     filename: "assets/fonts/[hash][ext][query]",
                 },
+            },
+            {
+                test: /\.html$/,
+                use: [
+                    {
+                        loader: 'html-loader'
+                    }
+                ]
             }
 
             // {
@@ -86,5 +102,17 @@ module.exports = {
         //     ]
         // }),
         new Dotenv(),
+        new CleanWebpackPlugin(),
+        // new BundleAnalyzerPlugin(),
     ],
+    devServer: {
+        static: {
+            directory: path.join(__dirname, 'dist'),
+        },
+        compress: true,
+        port: 9000,
+        historyApiFallback: true,
+        watchFiles: path.join(__dirname, "./**"),
+        open: true
+    },
 }

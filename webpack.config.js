@@ -15,9 +15,10 @@ module.exports = {
         // filename: 'main.js', //end bundle file
         filename: '[name].[contenthash].js', //end bundle file
         // assetModuleFilename: 'assets/images/[hash][ext][query]'
+        // publicPath: '/'
     },
     resolve: {
-        extensions: ['.js'],
+        extensions: ['.js', '.jsx'],
         alias: {
             '@utils': path.resolve(__dirname, 'src/utils/'),
             '@templates': path.resolve(__dirname, 'src/templates/'),
@@ -28,15 +29,25 @@ module.exports = {
     module: {
         rules: [
             {
-                test: /\.m?js/,
+                test: /\.(m?js|jsx)$/,
                 exclude: /node_modules/,
                 use: {
                     loader: 'babel-loader'
                 }
             },
+            // {
+            //     test: /\.css|\.styl$/i,
+            //     use: [MiniCssExtractPlugin.loader, 'css-loader', 'stylus-loader']
+            // },
             {
                 test: /\.css|\.styl$/i,
                 use: [MiniCssExtractPlugin.loader, 'css-loader', 'stylus-loader']
+            },
+            {
+                // test: /\.scss/,
+                test: /\.(css|scss)$/,
+                // use: ['style-loader', 'css-loader', 'sass-loader']
+                use: [MiniCssExtractPlugin.loader, 'css-loader', 'sass-loader']
             },
             {
                 test: /\.png/,
@@ -51,6 +62,14 @@ module.exports = {
                 generator: {
                     filename: "assets/fonts/[hash][ext][query]",
                 },
+            },
+            {
+                test: /\.html$/,
+                use: [
+                    {
+                        loader: 'html-loader'
+                    }
+                ]
             }
 
             // {
